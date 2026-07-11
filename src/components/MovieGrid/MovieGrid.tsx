@@ -8,10 +8,10 @@ interface MovieGridProps {
 }
 
 export const MovieGrid: React.FC<MovieGridProps> = ({ movies, onSelect }) => {
-    movies.sort((a, b) => a.title.localeCompare(b.title));
+    const sortedMovies = [...movies].sort((a, b) => b.vote_average - a.vote_average);
     return (
       <ul className={css.grid}>
-{movies.map((movie) => (
+{sortedMovies.map((movie) => (
     <li key={movie.id} onClick={() => onSelect(movie)}>
  <div className={css.card}>
  <img
