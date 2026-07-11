@@ -1,10 +1,9 @@
 import css from './ErrorMessage.module.css'
+import React from 'react'
 
-
-export default function ErrorMessage() {
+export const ErrorMessage: React.FC = () => {
     return (
-        <div className={css.error}>
-            <p className={css.text}>There was an error, please try again...</p>
-        </div>
+       <p className={css.text}>There was an error, please try again...</p>
+
     )
 }

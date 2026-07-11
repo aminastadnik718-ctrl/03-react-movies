@@ -1,19 +1,13 @@
 
 import css from './Loader.module.css'
+import React from 'react'
 
-export default function Loader() {
+
+export const Loader: React.FC = () => {
     return (
-        <div className={css.loader}>
-            <div className={css.spinner}></div>
-        </div>
+ <p className={css.text}>Loading movies, please wait...</p>
+
     )
             } 
 
 
-
-
-
-
-
-
-<p className={css.text}>Loading movies, please wait...</p>
