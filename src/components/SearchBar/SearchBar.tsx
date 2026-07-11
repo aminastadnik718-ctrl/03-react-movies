@@ -8,7 +8,7 @@ interface SearchBarProps {
     }
 
     export const SearchBar: React.FC<SearchBarProps> = ({ onSubmit }) => {
-    const handleFormAction = (formData: FormData) => { {
+    const handleFormAction = (formData: FormData) : void  => {
         const query = formData.get('query')?.toString().trim();
         if (!query) {
             toast.error('Please enter a search query.');
@@ -16,7 +16,7 @@ interface SearchBarProps {
         }
         onSubmit(query);
     };
-}
+
     
     return (
 
@@ -29,7 +29,7 @@ interface SearchBarProps {
 rel="noopener noreferrer" >
  Powered by TMDB
  </a>
- <form className={css.form} action={handleFormAction} method="post">
+ <form className={css.form} action={handleFormAction}>
  <input
  className={css.input}
  type="text"
@@ -44,9 +44,9 @@ rel="noopener noreferrer" >
  </form>
  </div>
 </header>
-    )
+    );
 
-}
+};
 
     
 
