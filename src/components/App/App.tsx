@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import { useState } from 'react';
+import  { Toaster } from 'react-hot-toast';
 import { SearchBar } from '../SearchBar/SearchBar';
 import { MovieGrid } from '../MovieGrid/MovieGrid';
 import { Loader } from '../Loader/Loader';
@@ -7,44 +7,36 @@ import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import { MovieModal } from '../MovieModal/MovieModal';
 import {fetchMovies } from '../../services/movieService';
 import type { Movie } from '../../types/movie';
+import { useQuery } from '@tanstack/react-query';
+import Pagination from '../ReactPaginate/ReactPaginate';
+
+
+
+
 
 export default function App() {
-  const [movies, setMovies] = useState<Movie[]>([]);
+
   const [query, setQuery] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isError, setIsError] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
-  useEffect(() => {
-    if (!query) return;
+const {
+  data ,
+  isLoading,
+  isError,
+} = useQuery({
+  queryKey: ['movies', query, page],
+  queryFn: () => fetchMovies(query, page),
+  enabled: !!query,
+});
+const movies = data?.results ?? [];
+const totalPages = data?.total_pages ?? 0;
 
-    const getMovies = async () => {
-      try {
-        setIsLoading(true);
-        setIsError(false);
-        const data = await fetchMovies(query);
 
-        if (data.length === 0) {
-          toast.error('No movies found for your request.');
-        }
-
-        setMovies(data);
-      } catch  {
-        setIsError(true);
-        toast.error('Something went wrong. Please try again.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    getMovies();
-  }, [query]);
-
-  const handleSearchSubmit = (newQuery: string) => {
-    setMovies([]); 
-    setQuery(newQuery);
-  };
-
+ const handleSearchSubmit = (searchQuery: string) => {
+    setQuery(searchQuery);
+    setPage(1);
+  }
   return (
     <div>
       <SearchBar onSubmit={handleSearchSubmit} />
@@ -54,6 +46,13 @@ export default function App() {
       {movies.length > 0 && (
         <MovieGrid movies={movies} onSelect={setSelectedMovie} />
       )}
+      {totalPages > 1 && (
+  <Pagination
+    totalPages={totalPages}
+    currentPage={page}
+    onPageChange={setPage}
+  />
+)}
       
       {isLoading && <Loader />}
       

@@ -19,7 +19,7 @@ interface fetchMoviesResponse {
 
 
 
-export const fetchMovies = async (query: string, page: number = 1): Promise<Movie[]> => {
+export const fetchMovies = async (query: string, page: number = 1): Promise<fetchMoviesResponse> => {
     const response = await movieInstance.get<fetchMoviesResponse>("/search/movie",
         {
             params: {
@@ -33,5 +33,5 @@ export const fetchMovies = async (query: string, page: number = 1): Promise<Movi
             },
         }
     );
-    return response.data.results;
+    return response.data;
 }
