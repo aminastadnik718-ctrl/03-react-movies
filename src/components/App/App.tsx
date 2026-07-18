@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import  { Toaster } from 'react-hot-toast';
+
+import  toast ,{ Toaster } from 'react-hot-toast';
 import { SearchBar } from '../SearchBar/SearchBar';
 import { MovieGrid } from '../MovieGrid/MovieGrid';
 import { Loader } from '../Loader/Loader';
@@ -9,7 +9,8 @@ import {fetchMovies } from '../../services/movieService';
 import type { Movie } from '../../types/movie';
 import { useQuery } from '@tanstack/react-query';
 import Pagination from '../ReactPaginate/ReactPaginate';
-
+import { keepPreviousData } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
 
 
@@ -24,11 +25,20 @@ const {
   data ,
   isLoading,
   isError,
+  isSuccess,
 } = useQuery({
   queryKey: ['movies', query, page],
   queryFn: () => fetchMovies(query, page),
   enabled: !!query,
+  placeholderData: keepPreviousData,
 });
+useEffect(() => {
+  if (isSuccess && data?.results.length === 0) {
+    toast.error("No movies found for your request.");
+  }
+}, [isSuccess, data]);
+
+
 const movies = data?.results ?? [];
 const totalPages = data?.total_pages ?? 0;
 
@@ -48,8 +58,8 @@ const totalPages = data?.total_pages ?? 0;
       )}
       {totalPages > 1 && (
   <Pagination
-    totalPages={totalPages}
-    currentPage={page}
+    pageCount={totalPages}
+    forcePage={page - 1}
     onPageChange={setPage}
   />
 )}
